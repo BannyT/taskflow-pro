@@ -1,31 +1,25 @@
 import '../styles/taskcard.css';
 
 function TaskCard({ task, onEdit, onDelete, onToggleComplete }) {
-  const getPriorityClass = (priority) => {
-    switch(priority) {
-      case 'high': return 'priority-high';
-      case 'medium': return 'priority-medium';
-      case 'low': return 'priority-low';
-      default: return '';
-    }
+  const isOverdue = (dueDate) => {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date() && !task.completed;
   };
 
-  const isDueSoon = (dueDate) => {
+  const isToday = (dueDate) => {
     if (!dueDate) return false;
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 2 && diffDays >= 0;
+    const today = new Date().toDateString();
+    const due = new Date(dueDate).toDateString();
+    return today === due && !task.completed;
   };
 
   return (
-    <div className="task-card">
+    <div className={`task-card priority-${task.priority}`}>
       <div className="task-header">
         <h3 className={`task-title ${task.completed ? 'completed' : ''}`}>
           {task.title}
         </h3>
-        <span className={`priority ${getPriorityClass(task.priority)}`}>
+        <span className={`priority-badge ${task.priority}`}>
           {task.priority}
         </span>
       </div>
@@ -36,22 +30,24 @@ function TaskCard({ task, onEdit, onDelete, onToggleComplete }) {
       
       <div className="task-meta">
         {task.dueDate && (
-          <span className={`due-date ${isDueSoon(task.dueDate) ? 'soon' : ''}`}>
-            📅 Due: {new Date(task.dueDate).toLocaleDateString()}
+          <span className={`due-date ${isOverdue(task.dueDate) ? 'overdue' : ''} ${isToday(task.dueDate) ? 'today' : ''}`}>
+            📅 {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            {isOverdue(task.dueDate) && ' (Overdue)'}
+            {isToday(task.dueDate) && ' (Today)'}
           </span>
         )}
       </div>
       
       <div className="task-actions">
         {!task.completed && (
-          <button onClick={() => onToggleComplete(task.id)} className="complete-btn">
+          <button onClick={() => onToggleComplete(task.id)} className="task-action-btn complete">
             ✓ Complete
           </button>
         )}
-        <button onClick={() => onEdit(task)} className="edit-btn">
+        <button onClick={() => onEdit(task)} className="task-action-btn edit">
           ✏ Edit
         </button>
-        <button onClick={() => onDelete(task.id)} className="delete-btn">
+        <button onClick={() => onDelete(task.id)} className="task-action-btn delete">
           🗑 Delete
         </button>
       </div>
