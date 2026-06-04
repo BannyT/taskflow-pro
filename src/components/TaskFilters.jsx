@@ -1,26 +1,23 @@
 import '../styles/taskfilters.css';
 
 function TaskFilters({ filter, setFilter }) {
+  const filters = [
+    { id: 'all', label: 'All Tasks' },
+    { id: 'active', label: 'Active' },
+    { id: 'completed', label: 'Completed' }
+  ];
+
   return (
-    <div className="task-filters">
-      <button 
-        className={filter === 'all' ? 'active' : ''}
-        onClick={() => setFilter('all')}
-      >
-        All
-      </button>
-      <button 
-        className={filter === 'active' ? 'active' : ''}
-        onClick={() => setFilter('active')}
-      >
-        Active
-      </button>
-      <button 
-        className={filter === 'completed' ? 'active' : ''}
-        onClick={() => setFilter('completed')}
-      >
-        Completed
-      </button>
+    <div className="filters">
+      {filters.map((f) => (
+        <button
+          key={f.id}
+          className={`filter-btn ${filter === f.id ? 'active' : ''}`}
+          onClick={() => setFilter(f.id)}
+        >
+          {f.label}
+        </button>
+      ))}
     </div>
   );
 }

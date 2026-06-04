@@ -8,46 +8,63 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
-    } catch (error) {
+    } catch (err) {
       setError('Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-page">
       <div className="auth-card">
-        <h2>Login to TaskFlow Pro</h2>
-        {error && <div className="error-message">{error}</div>}
+        <div className="auth-header">
+          <div className="auth-icon">✓</div>
+          <h2>Welcome back</h2>
+          <p>Log in to your account</p>
+        </div>
+        
+        {error && <div className="error-msg">{error}</div>}
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label>Email</label>
             <input
               type="email"
-              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="hello@example.com"
               required
             />
           </div>
+          
           <div className="form-group">
+            <label>Password</label>
             <input
               type="password"
-              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary">Login</button>
+          
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Log in'}
+          </button>
         </form>
-        <div className="auth-link">
-          Don't have an account? <Link to="/signup">Signup</Link>
+        
+        <div className="auth-footer">
+          <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
         </div>
       </div>
     </div>

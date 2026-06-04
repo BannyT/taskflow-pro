@@ -20,65 +20,72 @@ function TaskForm({ task, onSave, onClose }) {
     }
   }, [task]);
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title.trim()) {
-      alert('Title is required');
-      return;
-    }
+    if (!formData.title.trim()) return;
     onSave(formData);
   };
 
   return (
-    <div className="task-form-overlay" onClick={onClose}>
-      <div className="task-form" onClick={(e) => e.stopPropagation()}>
-        <h2>{task ? 'Edit Task' : 'Add New Task'}</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{task ? 'Edit Task' : 'New Task'}</h2>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Title *</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              placeholder="Enter task title"
-              required
-            />
+          <div className="modal-body">
+            <div className="form-group">
+              <label>Title</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter task title"
+                autoFocus
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Add details..."
+                rows="3"
+              />
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Priority</label>
+                <select name="priority" value={formData.priority} onChange={handleChange}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>Due Date</label>
+                <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
+              </div>
+            </div>
           </div>
           
-          <div className="form-group">
-            <label>Description</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="Enter task description"
-              rows="3"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Priority</label>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData({...formData, priority: e.target.value})}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label>Due Date</label>
-            <input
-              type="date"
-              value={formData.dueDate}
-              onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
-            />
-          </div>
-          
-          <div className="form-actions">
-            <button type="button" onClick={onClose} className="btn">Cancel</button>
-            <button type="submit" className="btn btn-primary">Save</button>
+          <div className="modal-footer">
+            <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
+            <button type="submit" className="save-btn">{task ? 'Update' : 'Create'}</button>
           </div>
         </form>
       </div>
